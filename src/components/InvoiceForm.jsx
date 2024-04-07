@@ -9,12 +9,14 @@ import InvoiceItem from "./InvoiceItem";
 import InvoiceModal from "./InvoiceModal";
 import { BiArrowBack } from "react-icons/bi";
 import InputGroup from "react-bootstrap/InputGroup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addInvoice, updateInvoice } from "../redux/invoicesSlice";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import generateRandomId from "../utils/generateRandomId";
 import { useInvoiceListData } from "../redux/hooks";
-
+import ProductList from "./ProductList";
+import { updateInvoiceProduct } from "../redux/invoicesSlice";
+import { UpdateProduct } from "../redux/ProductSlice";
 const InvoiceForm = () => {
   const dispatch = useDispatch();
   const params = useParams();
@@ -22,6 +24,14 @@ const InvoiceForm = () => {
   const navigate = useNavigate();
   const isCopy = location.pathname.includes("create");
   const isEdit = location.pathname.includes("edit");
+
+  const [showProducts, setShowProducts] = useState(false);
+
+
+  const toggleProductsOverlay = () => {
+    setShowProducts(!showProducts);
+  };
+
 
   const [isOpen, setIsOpen] = useState(false);
   const [copyId, setCopyId] = useState("");
@@ -69,6 +79,24 @@ const InvoiceForm = () => {
   useEffect(() => {
     handleCalculateTotal();
   }, []);
+
+  const handleAddToInvoice = (selectedProduct) => {
+    const newItem = {
+      itemId: selectedProduct.ItemId,
+      itemName: selectedProduct.ItemName,
+      itemDescription: selectedProduct.ItemDescription,
+      itemPrice: selectedProduct.ItemPrice,
+      itemQuantity: 1,
+    };
+  
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      items: [...prevFormData.items, newItem]
+    }));
+    handleCalculateTotal();
+
+  };
+  
 
   const handleRowDel = (itemToDelete) => {
     const updatedItems = formData.items.filter(
@@ -159,6 +187,16 @@ const InvoiceForm = () => {
   const handleAddInvoice = () => {
     if (isEdit) {
       dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
+      formData.items.forEach((item)=>{
+        const newproduct = {
+          ItemId: item.itemId,
+          ItemName: item.itemName,
+          ItemDescription: item.itemDescription,
+          ItemPrice: item.itemPrice,  
+        }
+        dispatch(updateInvoiceProduct({productId: item.itemId,newproduct}));
+        dispatch(UpdateProduct({productID:item.itemId,newproduct}));
+      })
       alert("Invoice updated successfuly 🥳");
     } else if (isCopy) {
       dispatch(addInvoice({ id: generateRandomId(), ...formData }));
@@ -370,9 +408,21 @@ const InvoiceForm = () => {
             >
               {isEdit ? "Update Invoice" : "Add Invoice"}
             </Button>
-            <Button variant="primary" type="submit" className="d-block w-100">
+            <Button variant="primary" type="submit" className="d-block w-100 mb-2">
               Review Invoice
             </Button>
+              <Button
+              variant="primary"
+              onClick={toggleProductsOverlay}
+              className="d-block w-100 mb-2"
+            >
+              Show Products
+            </Button>
+            {showProducts && (
+              <div className="products-floating-window">
+                <ProductList onAddToInvoice={handleAddToInvoice} onClose={toggleProductsOverlay} />
+              </div>
+            )}
             <InvoiceModal
               showModal={isOpen}
               closeModal={closeModal}
