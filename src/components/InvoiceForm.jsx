@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import {Toast} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import InvoiceItem from "./InvoiceItem";
 import InvoiceModal from "./InvoiceModal";
@@ -24,6 +25,8 @@ const InvoiceForm = () => {
   const navigate = useNavigate();
   const isCopy = location.pathname.includes("create");
   const isEdit = location.pathname.includes("edit");
+  const [isSuccess,setSuccess]=useState(false);
+  const [isError,setError]=useState(false);
 
   const [showProducts, setShowProducts] = useState(false);
 
@@ -71,7 +74,7 @@ const InvoiceForm = () => {
               itemDescription: "",
               itemPrice: "1.00",
               itemQuantity: 1,
-              itemCategory: "",
+              itemCategory: "Misc",
             },
           ],
         }
@@ -188,29 +191,76 @@ const InvoiceForm = () => {
   };
 
   const handleAddInvoice = () => {
+
     if (isEdit) {
-      dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
-      formData.items.forEach((item)=>{
-        const newproduct = {
-          ItemId: item.itemId,
-          ItemName: item.itemName,
-          ItemDescription: item.itemDescription,
-          ItemPrice: item.itemPrice,  
-          ItemCategory: item.itemCategory,
+      setError(false);
+      formData.items.forEach((item) => {
+        if (item.itemName === "") {
+          setError(true);
+        } else {
+          const newproduct = {
+            ItemId: item.itemId,
+            ItemName: item.itemName,
+            ItemDescription: item.itemDescription,
+            ItemPrice: item.itemPrice,
+            ItemCategory: item.itemCategory,
+          };
+          dispatch(updateInvoiceProduct({ productId: item.itemId, newproduct }));
+          dispatch(UpdateProduct({ productID: item.itemId, newproduct }));
         }
-        dispatch(updateInvoiceProduct({productId: item.itemId,newproduct}));
-        dispatch(UpdateProduct({productID:item.itemId,newproduct}));
-      })
-      alert("Invoice updated successfuly 🥳");
+      });
+      dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
+
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/');
+      }, 500); 
+
     } else if (isCopy) {
-      dispatch(addInvoice({ id: generateRandomId(), ...formData }));
-      alert("Invoice added successfuly 🥳");
+      let cnt = 0;
+      setError(false);
+
+      formData.items.forEach((item) => {
+        if (item.itemName !== "") {
+          cnt = cnt + 1;
+        } 
+      });
+
+      if (cnt === formData.items.length) {
+        dispatch(addInvoice({ id: generateRandomId(), ...formData }));
+        setSuccess(true);
+
+        setTimeout(() => {
+          navigate('/');
+        }, 500);
+        
+      } else {
+        setError(true);
+      }
     } else {
-      dispatch(addInvoice(formData));
-      alert("Invoice added successfuly 🥳");
+      let cnt = 0;
+      setError(false);
+
+      formData.items.forEach((item) => {
+        if (item.itemName !== "") {
+          cnt = cnt + 1;
+        } 
+      });
+
+      if (cnt === formData.items.length) {
+        dispatch(addInvoice(formData));
+
+        setTimeout(() => {
+          setSuccess(true);
+          navigate('/');
+        }, 500); 
+
+      } else {
+        setError(true);
+      }
     }
-    navigate("/");
   };
+  
 
   const handleCopyInvoice = () => {
     const recievedInvoice = getOneInvoice(copyId);
@@ -223,7 +273,15 @@ const InvoiceForm = () => {
     } else {
       alert("Invoice does not exists!!!!!");
     }
+
   };
+
+  const handleSuccessAlert = ()=>{
+    setError(false);
+  }
+  const handleErrorAlert = ()=>{
+    setSuccess(false);
+  }
 
   return (
     <Form onSubmit={openModal}>
@@ -234,6 +292,14 @@ const InvoiceForm = () => {
             <h5>Go Back</h5>
           </Link>
         </div>
+        
+        <Toast onClose={handleSuccessAlert} show={isSuccess} delay={200} autohide bg='success' className="mx-auto">
+          <Toast.Body>Invoice Added!</Toast.Body>
+        </Toast> 
+
+        <Toast onClose={handleErrorAlert} show={isError} delay={200} autohide  bg="danger" className="mx-auto" >
+          <Toast.Body>You have an empty Item!</Toast.Body>
+        </Toast> 
       </div>
 
       <Row>
@@ -348,7 +414,7 @@ const InvoiceForm = () => {
               onRowAdd={handleAddEvent}
               onRowDel={handleRowDel}
               currency={formData.currency}
-              items={formData.items}
+              items={formData.items} 
             />
             <Row className="mt-4 justify-content-end">
               <Col lg={6}>

@@ -16,8 +16,6 @@ const InvoiceItem = (props) => {
     categories[item.itemCategory].push(item);
   });
   
-  console.log("cat ",categories);
-
   const categoryTables = Object.entries(categories).map(([category, items]) => (
     <div key={category}>
       <h3>{category}</h3>
