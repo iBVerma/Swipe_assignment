@@ -27,16 +27,17 @@ const invoicesSlice = createSlice({
       state.forEach((invoice) => {
         invoice.items.forEach((item) => {   
           if (item.itemId === productId) {
-            invoice.subTotal -= parseFloat(item.itemPrice); // Subtract old item price
+            invoice.subTotal -= parseFloat(item.itemPrice); 
             item.itemName = newproduct.ItemName;
             item.itemDescription = newproduct.ItemDescription;
+            item.itemCategory= newproduct.ItemCategory;
             item.itemPrice = parseFloat(newproduct.ItemPrice).toFixed(2);
-            invoice.subTotal += parseFloat(item.itemPrice); // Add new item price
+            invoice.subTotal += parseFloat(item.itemPrice); 
           }
         });
       });
     
-      // Recalculate total
+    
       state.forEach((invoice) => {
         let subTotal = 0;
         invoice.items.forEach((item) => {

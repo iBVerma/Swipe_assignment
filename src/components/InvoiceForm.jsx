@@ -71,6 +71,7 @@ const InvoiceForm = () => {
               itemDescription: "",
               itemPrice: "1.00",
               itemQuantity: 1,
+              itemCategory: "",
             },
           ],
         }
@@ -87,6 +88,7 @@ const InvoiceForm = () => {
       itemDescription: selectedProduct.ItemDescription,
       itemPrice: selectedProduct.ItemPrice,
       itemQuantity: 1,
+      itemCategory: selectedProduct.ItemCategory,
     };
   
     setFormData(prevFormData => ({
@@ -114,6 +116,7 @@ const InvoiceForm = () => {
       itemDescription: "",
       itemPrice: "1.00",
       itemQuantity: 1,
+      itemCategory: "Misc",
     };
     setFormData({
       ...formData,
@@ -193,6 +196,7 @@ const InvoiceForm = () => {
           ItemName: item.itemName,
           ItemDescription: item.itemDescription,
           ItemPrice: item.itemPrice,  
+          ItemCategory: item.itemCategory,
         }
         dispatch(updateInvoiceProduct({productId: item.itemId,newproduct}));
         dispatch(UpdateProduct({productID:item.itemId,newproduct}));

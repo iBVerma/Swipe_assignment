@@ -16,7 +16,7 @@ const GenerateInvoice = () => {
       orientation: "portrait",
       unit: "pt",
       format: [612, 792],
-    });
+    }); 
     pdf.internal.scaleFactor = 1;
     const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -27,6 +27,16 @@ const GenerateInvoice = () => {
 };
 
 const InvoiceModal = (props) => {
+
+  // Group items by category
+  const categories = {};
+  props.items.forEach((item) => {
+    if (!categories[item.itemCategory]) {
+      categories[item.itemCategory] = [];
+    }
+    categories[item.itemCategory].push(item);
+  });
+
   return (
     <div>
       <Modal
@@ -75,34 +85,35 @@ const InvoiceModal = (props) => {
                 <div>{props.info.dateOfIssue || ""}</div>
               </Col>
             </Row>
-            <Table className="mb-0">
-              <thead>
-                <tr>
-                  <th>QTY</th>
-                  <th>DESCRIPTION</th>
-                  <th className="text-end">PRICE</th>
-                  <th className="text-end">AMOUNT</th>
-                </tr>
-              </thead>
-              <tbody>
-                {props.items.map((item, i) => {
-                  return (
-                    <tr id={i} key={i}>
-                      <td style={{ width: "70px" }}>{item.itemQuantity}</td>
-                      <td>
-                        {item.itemName} - {item.itemDescription}
-                      </td>
-                      <td className="text-end" style={{ width: "100px" }}>
-                        {props.currency} {item.itemPrice}
-                      </td>
-                      <td className="text-end" style={{ width: "100px" }}>
-                        {props.currency} {item.itemPrice * item.itemQuantity}
-                      </td>
+            {/* Render items by categories */}
+            {Object.entries(categories).map(([category, items]) => (
+              <div key={category}>
+                <h3>{category}</h3>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>QTY</th>
+                      <th>DESCRIPTION</th>
+                      <th className="text-end">AMOUNT</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+                  </thead>
+                  <tbody>
+                    {items.map((item, i) => (
+                      <tr id={i} key={i}>
+                        <td style={{ width: "70px" }}>{item.itemQuantity}</td>
+                        <td>
+                          {item.itemName} - {item.itemDescription}
+                        </td>
+          
+                        <td className="text-end" style={{ width: "100px" }}>
+                          {props.currency} {item.itemPrice * item.itemQuantity}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            ))}
             <Table>
               <tbody>
                 <tr>

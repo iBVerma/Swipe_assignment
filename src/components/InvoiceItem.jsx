@@ -8,18 +8,19 @@ import EditableField from "./EditableField";
 const InvoiceItem = (props) => {
   const { onItemizedItemEdit, currency, onRowDel, items, onRowAdd } = props;
 
-  const itemTable = items.map((item) => (
-    <ItemRow
-      key={item.id}
-      item={item}
-      onDelEvent={onRowDel}
-      onItemizedItemEdit={onItemizedItemEdit}
-      currency={currency}
-    />
-  ));
+  const categories = {};
+  items.forEach((item) => {
+    if (!categories[item.itemCategory]) {
+      categories[item.itemCategory] = [];
+    }
+    categories[item.itemCategory].push(item);
+  });
+  
+  console.log("cat ",categories);
 
-  return (
-    <div>
+  const categoryTables = Object.entries(categories).map(([category, items]) => (
+    <div key={category}>
+      <h3>{category}</h3>
       <Table>
         <thead>
           <tr>
@@ -29,8 +30,24 @@ const InvoiceItem = (props) => {
             <th className="text-center">ACTION</th>
           </tr>
         </thead>
-        <tbody>{itemTable}</tbody>
+        <tbody>
+          {items.map((item) => (
+            <ItemRow
+              key={item.itemId}
+              item={item}
+              onDelEvent={onRowDel}
+              onItemizedItemEdit={onItemizedItemEdit}
+              currency={currency}
+            />
+          ))}
+        </tbody>
       </Table>
+    </div>
+  ));
+
+  return (
+    <div>
+      {categoryTables}
       <Button className="fw-bold" onClick={onRowAdd}>
         Add Item
       </Button>
