@@ -81,7 +81,7 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
       <Modal.Header closeButton>
         <div className="d-flex justify-content-between w-100 align-items-center">
           <h4>Products</h4>
-          <Toast onClose={() =>setSuccess(false)} show={isSuccess} delay={500} autohide bg='success' className="mx-auto">
+          <Toast onClose={() =>setSuccess(false)} show={isSuccess} delay={1000} autohide bg='success' className="mx-auto">
             <Toast.Body>Product Added!</Toast.Body>
           </Toast> 
           

@@ -192,6 +192,16 @@ const InvoiceForm = () => {
 
   const handleAddInvoice = () => {
 
+    if (
+      !formData.billTo ||
+      !formData.billToEmail ||
+      !formData.billToAddress ||
+      !formData.dateOfIssue
+    ) {
+      setError(true); // Set error state to true to show error message
+      return; // Prevent further execution
+    }
+
     if (isEdit) {
       setError(false);
       formData.items.forEach((item) => {
@@ -293,12 +303,12 @@ const InvoiceForm = () => {
           </Link>
         </div>
         
-        <Toast onClose={handleSuccessAlert} show={isSuccess} delay={200} autohide bg='success' className="mx-auto">
+        <Toast onClose={()=>setSuccess(false)} show={isSuccess} delay={500} autohide bg='success' className="mx-auto">
           <Toast.Body>Invoice Added!</Toast.Body>
         </Toast> 
 
-        <Toast onClose={handleErrorAlert} show={isError} delay={200} autohide  bg="danger" className="mx-auto" >
-          <Toast.Body>You have an empty Item!</Toast.Body>
+        <Toast onClose={()=>setError(false)} show={isError} delay={1000} autohide  bg="danger" className="mx-auto" >
+          <Toast.Body>Please Fill out all the required fields!</Toast.Body>
         </Toast> 
       </div>
 
@@ -349,9 +359,9 @@ const InvoiceForm = () => {
                   type="text"
                   name="billTo"
                   className="my-2"
-                  onChange={(e) => editField(e.target.name, e.target.value)}
-                  autoComplete="name"
                   required
+                  onChange={(e) => editField(e.target.name, e.target.value)}
+                  autoComplete="name" 
                 />
                 <Form.Control
                   placeholder="Email address"
@@ -367,11 +377,11 @@ const InvoiceForm = () => {
                   placeholder="Billing address"
                   value={formData.billToAddress}
                   type="text"
+                  required
                   name="billToAddress"
                   className="my-2"
                   autoComplete="address"
                   onChange={(e) => editField(e.target.name, e.target.value)}
-                  required
                 />
               </Col>
               <Col>
@@ -382,10 +392,10 @@ const InvoiceForm = () => {
                   value={formData.billFrom}
                   type="text"
                   name="billFrom"
+                  required
                   className="my-2"
                   onChange={(e) => editField(e.target.name, e.target.value)}
                   autoComplete="name"
-                  required
                 />
                 <Form.Control
                   placeholder="Email address"
@@ -403,9 +413,9 @@ const InvoiceForm = () => {
                   type="text"
                   name="billFromAddress"
                   className="my-2"
+                  required
                   autoComplete="address"
                   onChange={(e) => editField(e.target.name, e.target.value)}
-                  required
                 />
               </Col>
             </Row>
