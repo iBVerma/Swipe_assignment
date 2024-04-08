@@ -7,7 +7,8 @@ import EditableField from "./EditableField";
 
 const InvoiceItem = (props) => {
   const { onItemizedItemEdit, currency, onRowDel, items, onRowAdd } = props;
-
+  
+  // categorize items
   const categories = {};
   items.forEach((item) => {
     if (!categories[item.itemCategory]) {

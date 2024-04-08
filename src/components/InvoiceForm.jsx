@@ -28,7 +28,6 @@ const InvoiceForm = () => {
   const [isSuccess,setSuccess]=useState(false);
   const [isError,setError]=useState(false);
   const [InvoiceExists,setInvoiceExists]=useState(false);
-
   const [showProducts, setShowProducts] = useState(false);
 
 
@@ -88,7 +87,7 @@ const InvoiceForm = () => {
   const handleAddToInvoice = (selectedProduct) => {
 
     const itemWithEmptyFields = formData.items.find((item) => item.itemName === "" && item.itemDescription === "");
-
+    // if the form contains a item with empty fields then just replace it with this product from products tab
     if (itemWithEmptyFields) {
       itemWithEmptyFields.itemName = selectedProduct.ItemName;
       itemWithEmptyFields.itemDescription= selectedProduct.ItemDescription;
@@ -98,6 +97,16 @@ const InvoiceForm = () => {
       handleCalculateTotal();
       return;
     }
+
+    const itemExists = formData.items.find((item) => item.itemId === selectedProduct.ItemId);
+    // when the product already exists in the form then just increase the qty by 1
+    if(itemExists){
+      itemExists.itemQuantity += 1;
+      handleCalculateTotal();
+      return;
+    }
+
+    // for brand new product, just add it to form
 
     const newItem = {
       itemId: selectedProduct.ItemId,
@@ -134,7 +143,7 @@ const InvoiceForm = () => {
       itemDescription: "",
       itemPrice: "1.00",
       itemQuantity: 1,
-      itemCategory: "Misc",
+      itemCategory: "Misc", // by default the category of the product is Misc
     };
     setFormData({
       ...formData,
@@ -221,12 +230,12 @@ const InvoiceForm = () => {
       setError(false);
 
       const hasEmptyFields = formData.items.some((item) => item.itemName === "" );
-
+      // if items contains an empty item
       if(hasEmptyFields){
         setError(true);
         return;
       }
-      
+
       formData.items.forEach((item) => {
         const newproduct = {
           ItemId: item.itemId,
@@ -290,7 +299,7 @@ const InvoiceForm = () => {
           </Link>
         </div>
 
-        <Toast
+      <Toast
         onClose={() => setSuccess(false)}
         show={isSuccess}
         delay={500}
@@ -299,7 +308,6 @@ const InvoiceForm = () => {
         className="mx-auto mt-3 "
       >
         <Toast.Body>Invoice Added!</Toast.Body>
-
       </Toast>
 
       <Toast

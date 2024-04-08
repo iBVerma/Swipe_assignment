@@ -45,7 +45,6 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
         ItemCategory: "",
       });
       setSuccess(true);
-
     }
   };
 

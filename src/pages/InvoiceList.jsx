@@ -21,7 +21,6 @@ const InvoiceList = () => {
     const invoice = getOneInvoice(copyId);
     if (!invoice) {
       setValid(true);
-      return;
     } else {
       navigate(`/create/${copyId}`);
     }
