@@ -41,19 +41,23 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
       setNotification({ show: true, message: "Fill all fields!", variant: "danger", delay: 1000 });
     } else {
 
-      const ProductIndex = productList.findIndex((item)=> (
+      let ProductIndex = productList.findIndex((item)=> (
         item.ItemName === editedProduct.ItemName &&
         item.ItemDescription === editedProduct.ItemDescription &&
         item.ItemCategory === editedProduct.ItemCategory
       ));
 
       const TobeDeleted = editedProduct.ItemId;
-      if(ProductIndex!==-1)editedProduct.ItemId = productList[ProductIndex].ItemId;
+      if(ProductIndex!==-1&&editedProduct.ItemId !== productList[ProductIndex].ItemId){
+        editedProduct.ItemId = productList[ProductIndex].ItemId;
+        ProductIndex = -2;
+      }
+
 
       dispatch(UpdateProduct({ productID: editedProduct.ItemId, newproduct: editedProduct }));
       dispatch(updateInvoiceProduct({ productId: editedProduct.ItemId, newproduct: editedProduct }));
 
-      if(ProductIndex!==-1){
+      if(ProductIndex===-2){
         dispatch(DeleteProduct({productID:TobeDeleted}));
         setNotification({show:true,message:"Similar Product updated!",variant:"danger",delay:1000});
       }else{

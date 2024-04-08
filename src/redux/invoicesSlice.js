@@ -21,6 +21,7 @@ const invoicesSlice = createSlice({
     },
     updateInvoiceProduct: (state, action) => {
       const { productId, newproduct } = action.payload;
+      console.log("pro ",newproduct);
     
       state.forEach((invoice) => {
         invoice.items.forEach((item) => {   
@@ -29,7 +30,7 @@ const invoicesSlice = createSlice({
             item.itemName = newproduct.ItemName;
             item.itemDescription = newproduct.ItemDescription;
             item.itemCategory= newproduct.ItemCategory;
-            item.itemPrice = parseFloat(newproduct.ItemPrice).toFixed(2);
+            item.itemPrice = parseFloat(newproduct.ItemPrice);
             invoice.subTotal += parseFloat(item.itemPrice); 
           }
         });
