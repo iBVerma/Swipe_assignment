@@ -107,15 +107,18 @@ const InvoiceForm = () => {
     }
 
     const itemExists = formData.items.find((item) => item.itemId === selectedProduct.ItemId);
-    // when the product already exists in the form then just increase the qty by 1
+    // when the product already exists in the form then just increase the qty by 1 and change other data if not same
     if(itemExists){
       itemExists.itemQuantity += 1;
+      itemExists.ItemDescription = selectedProduct.ItemDescription;
+      itemExists.itemPrice = selectedProduct.ItemPrice;
+      itemExists.itemCategory = selectedProduct.ItemCategory;
+      itemExists.itemName = selectedProduct.ItemName;
       handleCalculateTotal();
       return;
     }
 
     // for brand new product, just add it to form
-
     const newItem = {
       itemId: selectedProduct.ItemId,
       itemName: selectedProduct.ItemName,

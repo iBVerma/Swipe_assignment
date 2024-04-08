@@ -5,7 +5,6 @@ const productSlice = createSlice({
   name:'products',
   initialState:[],
   reducers:{
-
     AddProduct: (state,action) => {
       state.push(action.payload);
     },
@@ -14,14 +13,13 @@ const productSlice = createSlice({
       const index = state.findIndex(
         (product) => product.ItemId === action.payload.productID
       );
-      console.log("inside slice ",action.payload);
+
       if(index !== -1){
         state[index]= action.payload.newproduct;
       }
     },
 
     DeleteProduct: (state,action) => {
-      console.log("here ",action.payload);
       return state.filter((product) => product.ItemId !== action.payload.productID);
     }
   }

@@ -40,6 +40,7 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
     if (editedProduct.ItemName === "" || editedProduct.ItemCategory === "") {
       setNotification({ show: true, message: "Fill all fields!", variant: "danger", delay: 1000 });
     } else {
+
       const ProductIndex = productList.findIndex((item)=> (
         item.ItemName === editedProduct.ItemName &&
         item.ItemDescription === editedProduct.ItemDescription &&
@@ -47,7 +48,8 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
       ));
 
       const TobeDeleted = editedProduct.ItemId;
-      editedProduct.ItemId = productList[ProductIndex].ItemId;
+      if(ProductIndex!==-1)editedProduct.ItemId = productList[ProductIndex].ItemId;
+
       dispatch(UpdateProduct({ productID: editedProduct.ItemId, newproduct: editedProduct }));
       dispatch(updateInvoiceProduct({ productId: editedProduct.ItemId, newproduct: editedProduct }));
 
