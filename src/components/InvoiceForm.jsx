@@ -245,6 +245,19 @@ const InvoiceForm = () => {
         setNotification({ show: true, message: "Please Fill out all fields!", variant: "danger", delay: 1000 });
         return;
       }
+      
+      // incase you need to change the product information when it is changed from the invoice form instead of products tab
+      formData.items.forEach((item) => {
+        const newproduct = {
+          ItemId: item.itemId,
+          ItemName: item.itemName,
+          ItemDescription: item.itemDescription,
+          ItemPrice: item.itemPrice,
+          ItemCategory: item.itemCategory,
+        };
+        dispatch(updateInvoiceProduct({ productId: item.itemId, newproduct }));
+        dispatch(UpdateProduct({ productID: item.itemId, newproduct }));
+      });
 
       if(isEdit){
         dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
