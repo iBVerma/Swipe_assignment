@@ -15,7 +15,7 @@ import { addInvoice, updateInvoice } from "../redux/invoicesSlice";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import generateRandomId from "../utils/generateRandomId";
 import { useInvoiceListData } from "../redux/hooks";
-import ProductList from "./ProductList";
+import ProductList from "../pages/ProductList";
 import { updateInvoiceProduct } from "../redux/invoicesSlice";
 import { UpdateProduct } from "../redux/ProductSlice";
 const InvoiceForm = () => {
@@ -27,6 +27,7 @@ const InvoiceForm = () => {
   const isEdit = location.pathname.includes("edit");
   const [isSuccess,setSuccess]=useState(false);
   const [isError,setError]=useState(false);
+  const [InvoiceExists,setInvoiceExists]=useState(false);
 
   const [showProducts, setShowProducts] = useState(false);
 
@@ -85,6 +86,19 @@ const InvoiceForm = () => {
   }, []);
 
   const handleAddToInvoice = (selectedProduct) => {
+
+    const itemWithEmptyFields = formData.items.find((item) => item.itemName === "" && item.itemDescription === "");
+
+    if (itemWithEmptyFields) {
+      itemWithEmptyFields.itemName = selectedProduct.ItemName;
+      itemWithEmptyFields.itemDescription= selectedProduct.ItemDescription;
+      itemWithEmptyFields.itemPrice = selectedProduct.ItemPrice;
+      itemWithEmptyFields.itemId = selectedProduct.ItemId;
+      itemWithEmptyFields.itemCategory = selectedProduct.ItemCategory;
+      handleCalculateTotal();
+      return;
+    }
+
     const newItem = {
       itemId: selectedProduct.ItemId,
       itemName: selectedProduct.ItemName,
@@ -93,7 +107,8 @@ const InvoiceForm = () => {
       itemQuantity: 1,
       itemCategory: selectedProduct.ItemCategory,
     };
-  
+    
+    
     setFormData(prevFormData => ({
       ...prevFormData,
       items: [...prevFormData.items, newItem]
@@ -198,77 +213,55 @@ const InvoiceForm = () => {
       !formData.billToAddress ||
       !formData.dateOfIssue
     ) {
-      setError(true); // Set error state to true to show error message
-      return; // Prevent further execution
+      setError(true); 
+      return; 
     }
 
-    if (isEdit) {
-      setError(false);
-      formData.items.forEach((item) => {
-        if (item.itemName === "") {
-          setError(true);
-        } else {
-          const newproduct = {
-            ItemId: item.itemId,
-            ItemName: item.itemName,
-            ItemDescription: item.itemDescription,
-            ItemPrice: item.itemPrice,
-            ItemCategory: item.itemCategory,
-          };
-          dispatch(updateInvoiceProduct({ productId: item.itemId, newproduct }));
-          dispatch(UpdateProduct({ productID: item.itemId, newproduct }));
-        }
-      });
-      dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
-
-      setSuccess(true);
-      setTimeout(() => {
-        navigate('/');
-      }, 500); 
-
-    } else if (isCopy) {
-      let cnt = 0;
+    if (isEdit || isCopy) {
       setError(false);
 
+      const hasEmptyFields = formData.items.some((item) => item.itemName === "" );
+
+      if(hasEmptyFields){
+        setError(true);
+        return;
+      }
+      
       formData.items.forEach((item) => {
-        if (item.itemName !== "") {
-          cnt = cnt + 1;
-        } 
+        const newproduct = {
+          ItemId: item.itemId,
+          ItemName: item.itemName,
+          ItemDescription: item.itemDescription,
+          ItemPrice: item.itemPrice,
+          ItemCategory: item.itemCategory,
+        };
+        dispatch(updateInvoiceProduct({ productId: item.itemId, newproduct }));
+        dispatch(UpdateProduct({ productID: item.itemId, newproduct }));
       });
 
-      if (cnt === formData.items.length) {
+      if(isEdit){
+        dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
+      }else{
         dispatch(addInvoice({ id: generateRandomId(), ...formData }));
-        setSuccess(true);
-
-        setTimeout(() => {
-          navigate('/');
-        }, 500);
-        
-      } else {
-        setError(true);
       }
+      setSuccess(true);
+
     } else {
-      let cnt = 0;
       setError(false);
 
-      formData.items.forEach((item) => {
-        if (item.itemName !== "") {
-          cnt = cnt + 1;
-        } 
-      });
-
-      if (cnt === formData.items.length) {
-        dispatch(addInvoice(formData));
-
-        setTimeout(() => {
-          setSuccess(true);
-          navigate('/');
-        }, 500); 
-
-      } else {
+      const hasEmptyFields = formData.items.some((item) => item.itemName === "" );
+      if(hasEmptyFields){
         setError(true);
+        return;
       }
+
+      dispatch(addInvoice(formData));
+      setSuccess(true);
     }
+
+    setTimeout(() => {
+      navigate('/');
+    }, 500); 
   };
   
 
@@ -281,17 +274,11 @@ const InvoiceForm = () => {
         invoiceNumber: formData.invoiceNumber,
       });
     } else {
-      alert("Invoice does not exists!!!!!");
+      setInvoiceExists(true);
     }
 
   };
 
-  const handleSuccessAlert = ()=>{
-    setError(false);
-  }
-  const handleErrorAlert = ()=>{
-    setSuccess(false);
-  }
 
   return (
     <Form onSubmit={openModal}>
@@ -302,14 +289,41 @@ const InvoiceForm = () => {
             <h5>Go Back</h5>
           </Link>
         </div>
-        
-        <Toast onClose={()=>setSuccess(false)} show={isSuccess} delay={500} autohide bg='success' className="mx-auto">
-          <Toast.Body>Invoice Added!</Toast.Body>
-        </Toast> 
 
-        <Toast onClose={()=>setError(false)} show={isError} delay={1000} autohide  bg="danger" className="mx-auto" >
-          <Toast.Body>Please Fill out all the required fields!</Toast.Body>
-        </Toast> 
+        <Toast
+        onClose={() => setSuccess(false)}
+        show={isSuccess}
+        delay={500}
+        autohide
+        bg="success"
+        className="mx-auto mt-3 "
+      >
+        <Toast.Body>Invoice Added!</Toast.Body>
+
+      </Toast>
+
+      <Toast
+        onClose={() => setInvoiceExists(false)}
+        show={InvoiceExists}
+        delay={2000}
+        autohide
+        bg="danger"
+        className="mx-auto mt-3 "
+      >
+        <Toast.Body>Invoice Doesnt Exist!</Toast.Body>
+      </Toast>
+
+      <Toast
+        onClose={() => setError(false)}
+        show={isError}
+        delay={2000}
+        autohide
+        bg="danger"
+        className="mx-auto mt-3 "
+      >
+        <Toast.Body>Please Fill out all the required fields!</Toast.Body>
+      </Toast>
+
       </div>
 
       <Row>
