@@ -34,7 +34,8 @@ const InvoiceList = () => {
         delay={2000}
         autohide
         bg="danger"
-        className="mx-auto"
+        style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
+        className="mx-auto text-light"
       >
         <Toast.Body>Please Enter valid Invoice Id!</Toast.Body>
       </Toast>

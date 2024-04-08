@@ -292,46 +292,44 @@ const InvoiceForm = () => {
   return (
     <Form onSubmit={openModal}>
       <div className="d-flex align-items-center">
-        <BiArrowBack size={18} />
         <div className="fw-bold mt-1 mx-2 cursor-pointer">
           <Link to="/">
-            <h5>Go Back</h5>
+            <BiArrowBack size={30} />
           </Link>
         </div>
 
-      <Toast
-        onClose={() => setSuccess(false)}
-        show={isSuccess}
-        delay={500}
-        autohide
-        bg="success"
-        className="mx-auto mt-3 "
-      >
-        <Toast.Body>Invoice Added!</Toast.Body>
-      </Toast>
+        <Toast
+          onClose={() => setSuccess(false)}
+          show={isSuccess}
+          delay={5000}
+          autohide
+          bg='success'
+          style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
+        >
+          <Toast.Body className=" text-light">Invoice Added!</Toast.Body>
+        </Toast>
 
-      <Toast
-        onClose={() => setInvoiceExists(false)}
-        show={InvoiceExists}
-        delay={2000}
-        autohide
-        bg="danger"
-        className="mx-auto mt-3 "
-      >
-        <Toast.Body>Invoice Doesnt Exist!</Toast.Body>
-      </Toast>
+        <Toast
+          onClose={() => setInvoiceExists(false)}
+          show={InvoiceExists}
+          delay={5000}
+          autohide
+          bg="danger"
+          style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
+        >
+          <Toast.Body className=" text-light">Invoice Doesn't Exist!</Toast.Body>
+        </Toast>
 
-      <Toast
-        onClose={() => setError(false)}
-        show={isError}
-        delay={2000}
-        autohide
-        bg="danger"
-        className="mx-auto mt-3 "
-      >
-        <Toast.Body>Please Fill out all the required fields!</Toast.Body>
-      </Toast>
-
+        <Toast
+          onClose={() => setError(false)}
+          show={isError}
+          delay={5000}
+          autohide
+          bg="danger"
+          style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
+        >
+          <Toast.Body className=" text-light">Please Fill out all the required fields!</Toast.Body>
+        </Toast>
       </div>
 
       <Row>
