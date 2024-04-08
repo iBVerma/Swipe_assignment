@@ -47,21 +47,23 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
       ));
       console.log("check ",ProductIndex);
       if(ProductIndex!==-1){
-        setNotification({show:true,message:"Similar Product Present!",variant:"danger",delay:1000});
-        return;
+        dispatch(UpdateProduct({ productID: productList[ProductIndex].ItemId, newproduct: editedProduct }));
+        dispatch(updateInvoiceProduct({ productId: productList[ProductIndex].ItemId, newproduct: editedProduct }));
+        setNotification({show:true,message:"Similar Product updated!",variant:"danger",delay:1000});
+      }else{
+        dispatch(UpdateProduct({ productID: editedProduct.ItemId, newproduct: editedProduct }));
+        dispatch(updateInvoiceProduct({ productId: editedProduct.ItemId, newproduct: editedProduct }));
+        
+        setEditedProduct({
+          ItemId: "",
+          ItemName: "",
+          ItemPrice: 0,
+          ItemDescription: "",
+          ItemCategory: "",
+        });
+        setNotification({ show: true, message: "Product Added!", variant: "success", delay: 1000 })
       }
-      dispatch(UpdateProduct({ productID: editedProduct.ItemId, newproduct: editedProduct }));
-      dispatch(updateInvoiceProduct({ productId: editedProduct.ItemId, newproduct: editedProduct }));
       setShowEditModal(false);
-
-      setEditedProduct({
-        ItemId: "",
-        ItemName: "",
-        ItemPrice: 0,
-        ItemDescription: "",
-        ItemCategory: "",
-      });
-      setNotification({ show: true, message: "Product Added!", variant: "success", delay: 1000 });
     }
   };
 
