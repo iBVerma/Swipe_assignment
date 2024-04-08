@@ -100,6 +100,13 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
     }
   };
 
+  const handleCloseButtonClick = () =>{
+    if(editedProduct.ItemName === "" && editedProduct.ItemDescription === "" && editedProduct.ItemCategory===""){
+      dispatch(DeleteProduct({productID:editedProduct.ItemId}));
+    } 
+    setShowEditModal(false);
+  }
+
   return (
     <Modal show={true} onHide={onClose} size="lg">
 
@@ -144,7 +151,7 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
       </Modal.Footer>
 
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)} backdrop="static">
-        <Modal.Header closeButton>
+        <Modal.Header >
           <Modal.Title>Edit Product</Modal.Title>
           <Col xs={6} className="mx-auto">
           <NotificationToast show={notification.show} 
@@ -154,6 +161,7 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
           delay={notification.delay} 
           />
           </Col>
+          <button type="button" className="btn-close" aria-label="Close" onClick={handleCloseButtonClick}></button>
         </Modal.Header>
         <Modal.Body>
           <Form>

@@ -13,8 +13,14 @@ const productSlice = createSlice({
       const index = state.findIndex(
         (product) => product.ItemId === action.payload.productID
       );
+      
 
       if(index !== -1){
+        console.log("Baka ",state[index]);
+        // if(state[index].ItemName ==="" && state[index].ItemDescription === "" && state[index].ItemCategory=== ""){
+        //   state.splice(index,1);
+        // }
+        // else 
         state[index]= action.payload.newproduct;
       }
     },
