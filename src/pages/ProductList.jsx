@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import { UpdateProduct, AddProduct } from "../redux/ProductSlice";
+import { UpdateProduct, AddProduct, DeleteProduct } from "../redux/ProductSlice";
 import generateRandomId from "../utils/generateRandomId";
 import { updateInvoiceProduct } from "../redux/invoicesSlice";
 import { Toast, Col } from "react-bootstrap";
@@ -45,15 +45,16 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
         item.ItemDescription === editedProduct.ItemDescription &&
         item.ItemCategory === editedProduct.ItemCategory
       ));
-      console.log("check ",ProductIndex);
+
+      const TobeDeleted = editedProduct.ItemId;
+      editedProduct.ItemId = productList[ProductIndex].ItemId;
+      dispatch(UpdateProduct({ productID: editedProduct.ItemId, newproduct: editedProduct }));
+      dispatch(updateInvoiceProduct({ productId: editedProduct.ItemId, newproduct: editedProduct }));
+
       if(ProductIndex!==-1){
-        dispatch(UpdateProduct({ productID: productList[ProductIndex].ItemId, newproduct: editedProduct }));
-        dispatch(updateInvoiceProduct({ productId: productList[ProductIndex].ItemId, newproduct: editedProduct }));
+        dispatch(DeleteProduct({productID:TobeDeleted}));
         setNotification({show:true,message:"Similar Product updated!",variant:"danger",delay:1000});
       }else{
-        dispatch(UpdateProduct({ productID: editedProduct.ItemId, newproduct: editedProduct }));
-        dispatch(updateInvoiceProduct({ productId: editedProduct.ItemId, newproduct: editedProduct }));
-        
         setEditedProduct({
           ItemId: "",
           ItemName: "",
