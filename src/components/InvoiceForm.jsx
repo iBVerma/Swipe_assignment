@@ -246,18 +246,6 @@ const InvoiceForm = () => {
         return;
       }
 
-      formData.items.forEach((item) => {
-        const newproduct = {
-          ItemId: item.itemId,
-          ItemName: item.itemName,
-          ItemDescription: item.itemDescription,
-          ItemPrice: item.itemPrice,
-          ItemCategory: item.itemCategory,
-        };
-        dispatch(updateInvoiceProduct({ productId: item.itemId, newproduct }));
-        dispatch(UpdateProduct({ productID: item.itemId, newproduct }));
-      });
-
       if(isEdit){
         dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
         setNotification({ show: true, message: "Invoice Updated!", variant: "success", delay: 1000 });
