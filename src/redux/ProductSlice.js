@@ -18,6 +18,12 @@ const productSlice = createSlice({
       if(index !== -1){
         state[index]= action.payload.newproduct;
       }
+      // else{
+      //   const index = state.findIndex(
+      //     (product) => product.itemName === action.payload.newproduct.ItemName
+      //   )
+      //   if(index === -1) state.push(action.payload);
+      // }
     }
   }
 })

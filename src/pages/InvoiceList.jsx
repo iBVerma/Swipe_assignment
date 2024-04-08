@@ -11,16 +11,24 @@ import {Toast} from "react-bootstrap"
 import { useDispatch } from "react-redux";
 import { deleteInvoice } from "../redux/invoicesSlice";
 
+const NotificationToast = ({ show, onClose, message, variant, delay }) => {
+  return (
+    <Toast onClose={() => onClose(false)} show={show} delay={delay} autohide bg={variant} className="mx-auto text-light" style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}>
+      <Toast.Body>{message}</Toast.Body>
+    </Toast>
+  );
+};
+
 const InvoiceList = () => {
   const { invoiceList, getOneInvoice } = useInvoiceListData();
   const isListEmpty = invoiceList.length === 0;
   const [copyId, setCopyId] = useState("");
-  const [isValid,setValid]=useState(false);
+  const [notification, setNotification] = useState({ show: false, message: "", variant: "success", delay: 1000 });
   const navigate = useNavigate();
   const handleCopyClick = () => {
     const invoice = getOneInvoice(copyId);
     if (!invoice) {
-      setValid(true);
+      setNotification({ show: true, message: "Enter Valid Invoice id!", variant: "danger", delay: 1000 });
     } else {
       navigate(`/create/${copyId}`);
     }
@@ -28,17 +36,14 @@ const InvoiceList = () => {
 
   return (
     <Row>
-      <Toast
-        onClose={() => setValid(false)}
-        show={isValid}
-        delay={2000}
-        autohide
-        bg="danger"
-        style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
-        className="mx-auto text-light"
-      >
-        <Toast.Body>Please Enter valid Invoice Id!</Toast.Body>
-      </Toast>
+        <NotificationToast 
+          show={notification.show} 
+          onClose={() => setNotification({ ...notification, show: false })} 
+          message={notification.message} 
+          variant={notification.variant} 
+          delay={notification.delay} 
+          style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
+        />
       <Col className="mx-auto" xs={12} md={8} lg={9}>
         <h3 className="fw-bold pb-2 pb-md-4 text-center">Swipe Assignment</h3>
         <Card className="d-flex p-3 p-md-4 my-3 my-md-4 ">

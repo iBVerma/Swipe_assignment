@@ -18,6 +18,16 @@ import { useInvoiceListData } from "../redux/hooks";
 import ProductList from "../pages/ProductList";
 import { updateInvoiceProduct } from "../redux/invoicesSlice";
 import { UpdateProduct } from "../redux/ProductSlice";
+
+const NotificationToast = ({ show, onClose, message, variant, delay }) => {
+  return (
+    <Toast onClose={() => onClose(false)} show={show} delay={delay} autohide bg={variant} className="mx-auto text-light" style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}>
+      <Toast.Body>{message}</Toast.Body>
+    </Toast>
+  );
+};
+
+
 const InvoiceForm = () => {
   const dispatch = useDispatch();
   const params = useParams();
@@ -25,10 +35,8 @@ const InvoiceForm = () => {
   const navigate = useNavigate();
   const isCopy = location.pathname.includes("create");
   const isEdit = location.pathname.includes("edit");
-  const [isSuccess,setSuccess]=useState(false);
-  const [isError,setError]=useState(false);
-  const [InvoiceExists,setInvoiceExists]=useState(false);
   const [showProducts, setShowProducts] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: "", variant: "success", delay: 1000 });
 
 
   const toggleProductsOverlay = () => {
@@ -222,17 +230,16 @@ const InvoiceForm = () => {
       !formData.billToAddress ||
       !formData.dateOfIssue
     ) {
-      setError(true); 
+      setNotification({ show: true, message: "Please Fill out all fields!", variant: "danger", delay: 1000 });
       return; 
     }
-
+    
     if (isEdit || isCopy) {
-      setError(false);
-
+      
       const hasEmptyFields = formData.items.some((item) => item.itemName === "" );
       // if items contains an empty item
       if(hasEmptyFields){
-        setError(true);
+        setNotification({ show: true, message: "Please Fill out all fields!", variant: "danger", delay: 1000 });
         return;
       }
 
@@ -250,24 +257,24 @@ const InvoiceForm = () => {
 
       if(isEdit){
         dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
+        setNotification({ show: true, message: "Invoice Updated!", variant: "success", delay: 1000 });
       }else{
         dispatch(addInvoice({ id: generateRandomId(), ...formData }));
+        setNotification({ show: true, message: "Invoice Added!", variant: "success", delay: 1000 });
       }
-      setSuccess(true);
-
+      
     } else {
-      setError(false);
-
+      
       const hasEmptyFields = formData.items.some((item) => item.itemName === "" );
       if(hasEmptyFields){
-        setError(true);
+        setNotification({ show: true, message: "Please Fill out all fields!", variant: "danger", delay: 1000 });
         return;
       }
-
+      
       dispatch(addInvoice(formData));
-      setSuccess(true);
+      setNotification({ show: true, message: "Invoice Added!", variant: "success", delay: 1000 });
     }
-
+    
     setTimeout(() => {
       navigate('/');
     }, 500); 
@@ -283,7 +290,8 @@ const InvoiceForm = () => {
         invoiceNumber: formData.invoiceNumber,
       });
     } else {
-      setInvoiceExists(true);
+      setNotification({ show: true, message: "Invoice Doesnt Exist!", variant: "danger", delay: 1000 });
+      
     }
 
   };
@@ -298,38 +306,15 @@ const InvoiceForm = () => {
           </Link>
         </div>
 
-        <Toast
-          onClose={() => setSuccess(false)}
-          show={isSuccess}
-          delay={5000}
-          autohide
-          bg='success'
+        <NotificationToast 
+          show={notification.show} 
+          onClose={() => setNotification({ ...notification, show: false })} 
+          message={notification.message} 
+          variant={notification.variant} 
+          delay={notification.delay} 
           style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
-        >
-          <Toast.Body className=" text-light">Invoice Added!</Toast.Body>
-        </Toast>
+          />
 
-        <Toast
-          onClose={() => setInvoiceExists(false)}
-          show={InvoiceExists}
-          delay={5000}
-          autohide
-          bg="danger"
-          style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
-        >
-          <Toast.Body className=" text-light">Invoice Doesn't Exist!</Toast.Body>
-        </Toast>
-
-        <Toast
-          onClose={() => setError(false)}
-          show={isError}
-          delay={5000}
-          autohide
-          bg="danger"
-          style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}
-        >
-          <Toast.Body className=" text-light">Please Fill out all the required fields!</Toast.Body>
-        </Toast>
       </div>
 
       <Row>
