@@ -7,15 +7,9 @@ import Form from "react-bootstrap/Form";
 import { UpdateProduct, AddProduct, DeleteProduct } from "../redux/ProductSlice";
 import generateRandomId from "../utils/generateRandomId";
 import { updateInvoiceProduct } from "../redux/invoicesSlice";
-import { Toast, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
+import NotificationToast from "../utils/NotificationToast";
 
-const NotificationToast = ({ show, onClose, message, variant, delay }) => {
-  return (
-    <Toast onClose={() => onClose(false)} show={show} delay={delay} autohide bg={variant} className="mx-auto text-light" >
-      <Toast.Body>{message}</Toast.Body>
-    </Toast>
-  );
-};
 
 const ProductList = ({ onClose, onAddToInvoice }) => {
   const dispatch = useDispatch();

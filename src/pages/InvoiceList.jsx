@@ -7,17 +7,10 @@ import { BsEyeFill } from "react-icons/bs";
 import InvoiceModal from "../components/InvoiceModal";
 import { useNavigate } from "react-router-dom";
 import { useInvoiceListData } from "../redux/hooks";
-import {Toast} from "react-bootstrap"
 import { useDispatch } from "react-redux";
 import { deleteInvoice } from "../redux/invoicesSlice";
+import NotificationToast from "../utils/NotificationToast";
 
-const NotificationToast = ({ show, onClose, message, variant, delay }) => {
-  return (
-    <Toast onClose={() => onClose(false)} show={show} delay={delay} autohide bg={variant} className="mx-auto text-light" style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}>
-      <Toast.Body>{message}</Toast.Body>
-    </Toast>
-  );
-};
 
 const InvoiceList = () => {
   const { invoiceList, getOneInvoice } = useInvoiceListData();

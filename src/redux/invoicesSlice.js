@@ -21,7 +21,6 @@ const invoicesSlice = createSlice({
     },
     updateInvoiceProduct: (state, action) => {
       const { productId, newproduct } = action.payload;
-      console.log("pro ",newproduct);
     
       state.forEach((invoice) => {
         invoice.items.forEach((item) => {   

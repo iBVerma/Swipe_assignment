@@ -4,7 +4,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import {Toast} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import InvoiceItem from "./InvoiceItem";
 import InvoiceModal from "./InvoiceModal";
@@ -18,14 +17,7 @@ import { useInvoiceListData } from "../redux/hooks";
 import ProductList from "../pages/ProductList";
 import { updateInvoiceProduct } from "../redux/invoicesSlice";
 import { UpdateProduct } from "../redux/ProductSlice";
-
-const NotificationToast = ({ show, onClose, message, variant, delay }) => {
-  return (
-    <Toast onClose={() => onClose(false)} show={show} delay={delay} autohide bg={variant} className="mx-auto text-light" style={{ position: "fixed", top: 5, right: 20, zIndex: 9999 }}>
-      <Toast.Body>{message}</Toast.Body>
-    </Toast>
-  );
-};
+import NotificationToast from "../utils/NotificationToast";
 
 
 const InvoiceForm = () => {
