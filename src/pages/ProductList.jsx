@@ -22,6 +22,8 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
   const productList = useSelector((state) => state.products);
   const [showEditModal, setShowEditModal] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: "", variant: "success", delay: 1000 });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [editedProduct, setEditedProduct] = useState({
     ItemId: "",
     ItemName: "",
@@ -107,6 +109,16 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
     setShowEditModal(false);
   }
 
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  const filteredProductList = productList.filter((product) => {
+    const matchesSearch = product.ItemName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "" || product.ItemCategory === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <Modal show={true} onHide={onClose} size="lg">
 
@@ -126,8 +138,34 @@ const ProductList = ({ onClose, onAddToInvoice }) => {
         </div>
       </Modal.Header>
       <Modal.Body className="overflow-auto" style={{ maxHeight: "70vh" }}>
-        {productList && productList.length > 0 ? (
-          productList.map((product) => (
+      <div className="row mb-3">
+          <div className="col-md-6">
+            <Form.Group controlId="searchProduct">
+              <Form.Control
+                type="text"
+                placeholder="Search Product"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </Form.Group>
+          </div>
+          <div className="col-md-6">
+            <Form.Group controlId="categoryProduct">
+              <Form.Control
+                as="select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Food">Food</option>
+                <option value="Misc">Misc</option>
+              </Form.Control>
+            </Form.Group>
+          </div>
+        </div>
+        {filteredProductList && filteredProductList.length > 0 ? (
+          filteredProductList.map((product) => (
             <div key={product.ItemId} className="card mb-3">
               <div className="card-body d-flex justify-content-between align-items-center">
                 <div>
